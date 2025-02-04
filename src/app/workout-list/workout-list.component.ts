@@ -17,15 +17,23 @@ interface WorkoutListEntry {
   templateUrl: './workout-list.component.html',
   styleUrls: ['./workout-list.component.css'],
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule], // Added NgModel for two-way binding
+  imports: [NgFor, NgIf, FormsModule],
 })
 export class WorkoutListComponent implements OnInit {
-  workoutArray = workouts;
-  allWorkoutEntries: WorkoutListEntry[] = []; // Store unfiltered data
-  workoutEntries: WorkoutListEntry[] = []; // Store filtered data
-  searchQuery: string = ''; // Search input state
-  selectedWorkoutType: string = 'Choose Workout'; // Default filter option
+  // Add 'Choose Workout' to workout array
+  workoutArray = ['Choose Workout', ...workouts];
+  allWorkoutEntries: WorkoutListEntry[] = [];
+  filteredEntries: WorkoutListEntry[] = []; // New property to store filtered entries
+  workoutEntries: WorkoutListEntry[] = [];
+  searchQuery: string = '';
+  selectedWorkoutType: string = 'Choose Workout';
   error: string | null = null;
+
+  // Pagination state
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+  totalPages: number = 1;
+  totalItems: number = 0;
 
   constructor(private storageService: BrowserStorageService) {}
 
@@ -39,7 +47,8 @@ export class WorkoutListComponent implements OnInit {
   }
 
   private loadWorkoutEntries(): void {
-    const rawEntries: WorkoutEntry[] = this.storageService.get('workoutData');
+    const rawEntries: WorkoutEntry[] =
+      this.storageService.get('workoutData') || [];
 
     if (!Array.isArray(rawEntries)) {
       throw new Error('Invalid workout data format');
@@ -72,20 +81,87 @@ export class WorkoutListComponent implements OnInit {
       (a, b) => b.totalWorkoutMinutes - a.totalWorkoutMinutes
     );
 
-    this.applyFilters();
+    this.updateFilteredEntries();
   }
 
-  applyFilters(): void {
-    this.workoutEntries = this.allWorkoutEntries.filter((entry) => {
-      const matchesSearch = entry.username
-        .toLowerCase()
-        .includes(this.searchQuery.toLowerCase());
+  private updateFilteredEntries(): void {
+    // Apply filters to get filtered entries
+    this.filteredEntries = this.allWorkoutEntries.filter((entry) => {
+      const matchesSearch = this.searchQuery
+        ? entry.username
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase().trim())
+        : true;
 
       const matchesFilter =
-        this.selectedWorkoutType === 'Choose Workout' ||
-        entry.workouts.includes(this.selectedWorkoutType);
+        this.selectedWorkoutType === 'Choose Workout'
+          ? true
+          : entry.workouts.includes(this.selectedWorkoutType);
 
       return matchesSearch && matchesFilter;
     });
+
+    // Update pagination info
+    this.totalItems = this.filteredEntries.length;
+    this.totalPages = Math.max(
+      1,
+      Math.ceil(this.totalItems / this.itemsPerPage)
+    );
+
+    // Ensure current page is valid
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+
+    // Update displayed entries
+    this.updateDisplayedEntries();
+  }
+
+  private updateDisplayedEntries(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.workoutEntries = this.filteredEntries.slice(startIndex, endIndex);
+  }
+
+  onSearch(): void {
+    this.currentPage = 1;
+    this.updateFilteredEntries();
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.updateFilteredEntries();
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updateDisplayedEntries();
+    }
+  }
+
+  goToPrevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updateDisplayedEntries();
+    }
+  }
+
+  onItemsPerPageChange(newItemsPerPage: number): void {
+    this.itemsPerPage = Number(newItemsPerPage); // Ensure number type
+    this.currentPage = 1;
+    this.updateFilteredEntries(); // Recalculate everything with new items per page
+  }
+
+  get paginationInfo(): string {
+    if (this.totalItems === 0) {
+      return 'No entries to show';
+    }
+    const startItem = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const endItem = Math.min(
+      this.currentPage * this.itemsPerPage,
+      this.totalItems
+    );
+    return `Showing ${startItem} to ${endItem} of ${this.totalItems} entries`;
   }
 }
