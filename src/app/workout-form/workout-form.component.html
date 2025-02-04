@@ -1,0 +1,104 @@
+<form
+  class="flex flex-col gap-6 max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg"
+  [formGroup]="profileForm"
+  (ngSubmit)="onSubmit()"
+>
+  <h1 class="text-3xl font-medium underline text-center">Add Workout</h1>
+
+  <!-- Username Input -->
+  <div class="w-full">
+    <label for="username" class="block text-gray-700 font-medium mb-2"
+      >Username</label
+    >
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="User Name*"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+      formControlName="username"
+    />
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('username', 'required')"
+    >
+      Username is required.
+    </div>
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('username', 'minlength')"
+    >
+      Minimum 3 characters required.
+    </div>
+  </div>
+
+  <!-- Workout Type Select -->
+  <div class="w-full">
+    <label for="workoutType" class="block text-gray-700 font-medium mb-2"
+      >Workout Type</label
+    >
+    <select
+      id="workoutType"
+      name="workoutType"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm bg-white"
+      formControlName="workoutType"
+    >
+      <option *ngFor="let workout of workoutArray" [ngValue]="workout">
+        {{ workout }}
+      </option>
+    </select>
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('workoutType', 'invalidWorkout')"
+    >
+      Please select a valid workout type.
+    </div>
+  </div>
+
+  <!-- Workout Minutes Input -->
+  <div class="w-full">
+    <label for="workoutMinutes" class="block text-gray-700 font-medium mb-2"
+      >Workout Minutes</label
+    >
+    <input
+      type="number"
+      id="workoutMinutes"
+      placeholder="Workout Minutes*"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+      formControlName="workoutMinutes"
+    />
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('workoutMinutes', 'required')"
+    >
+      Workout minutes are required.
+    </div>
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('workoutMinutes', 'min')"
+    >
+      Minimum 5 minutes required.
+    </div>
+    <div
+      class="text-red-500 text-sm mt-1"
+      *ngIf="hasError('workoutMinutes', 'max')"
+    >
+      Maximum 300 minutes allowed.
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md cursor-pointer disabled:opacity-50"
+    [disabled]="profileForm.invalid"
+  >
+    Submit
+  </button>
+</form>
+<div
+  *ngIf="successMessage"
+  class="text-green-600 bg-green-100 p-2 rounded-lg mb-3 text-center"
+>
+  {{ successMessage }}
+</div>

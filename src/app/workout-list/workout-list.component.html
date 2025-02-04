@@ -1,0 +1,111 @@
+<main
+  class="flex flex-col gap-8 max-w-7xl mx-auto p-6 bg-gray-100 rounded-xl shadow-lg"
+>
+  <!-- Search & Filter Section -->
+  <section class="bg-white p-6 rounded-lg shadow-md">
+    <article class="mb-4">
+      <input
+        type="text"
+        placeholder="Search by name..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+        [(ngModel)]="searchQuery"
+        (input)="applyFilters()"
+      />
+    </article>
+
+    <div class="flex items-center gap-4">
+      <label for="workoutType" class="text-gray-700 font-medium"
+        >Filter by Workout Type:</label
+      >
+      <!-- <select
+        name="workoutType"
+        id="workoutType"
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm bg-white"
+      >
+        @for (workout of workoutArray; track workout) {
+        <option value="{{ workout }}">{{ workout }}</option>
+        }
+      </select> -->
+
+      <select
+        name="workoutType"
+        id="workoutType"
+        [(ngModel)]="selectedWorkoutType"
+        (change)="applyFilters()"
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm bg-white"
+      >
+        <option *ngFor="let workout of workoutArray" [value]="workout">
+          {{ workout }}
+        </option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Table Section -->
+  <!-- Table Section -->
+<section class="bg-white p-6 rounded-lg shadow-md">
+  <table class="w-full border-collapse table-auto" *ngIf="workoutEntries.length > 0; else noEntries">
+    <thead>
+      <tr class="bg-blue-600 text-white text-left">
+        <th class="py-3 px-4">Name</th>
+        <th class="py-3 px-4">Workouts</th>
+        <th class="py-3 px-4">Number of Workouts</th>
+        <th class="py-3 px-4">Total Workout Minutes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of workoutEntries" class="border-b hover:bg-gray-100">
+        <td class="py-3 px-4">{{ entry.username }}</td>
+        <td class="py-3 px-4">{{ entry.workouts.join(", ") }}</td>
+        <td class="py-3 px-4">{{ entry.totalWorkouts }}</td>
+        <td class="py-3 px-4">{{ entry.totalWorkoutMinutes }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- No Entries Found Message -->
+  <ng-template #noEntries>
+    <div class="text-center py-12">
+      <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" alt="No Data" class="w-24 mx-auto mb-4 opacity-75" />
+      <p class="text-gray-700 text-lg font-semibold">No workout entries found</p>
+      <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
+    </div>
+  </ng-template>
+</section>
+
+
+  <!-- Pagination Section -->
+  <section
+    class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center"
+  >
+    <!-- Pagination Buttons -->
+    <div class="flex gap-2">
+      <button
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+      >
+        Prev
+      </button>
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+      >
+        Next
+      </button>
+    </div>
+
+    <article class="flex items-center gap-4">
+      <label for="entries" class="text-gray-700 font-medium"
+        >Items per page:</label
+      >
+      <select
+        name="entries"
+        id="entries"
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm bg-white"
+      >
+        <option value="1">1</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </article>
+  </section>
+</main>

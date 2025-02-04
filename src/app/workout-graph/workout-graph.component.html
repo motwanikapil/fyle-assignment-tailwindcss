@@ -1,0 +1,34 @@
+<section class="bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4">Workout Stats</h2>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="text-red-500 text-center font-medium mb-4">
+    {{ error }}
+  </div>
+
+  <!-- User Selection -->
+  <label for="userSelect" class="block text-gray-600 font-medium mb-2">Select User:</label>
+  <select
+    id="userSelect"
+    [(ngModel)]="selectedUser"
+    (change)="updateChart()"
+    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm bg-white"
+  >
+    <option value="" disabled>Select a user</option>
+    <option *ngFor="let user of users" [value]="user">{{ user }}</option>
+  </select>
+
+  <!-- Chart -->
+  <div *ngIf="selectedUser" class="mt-6">
+    <canvas baseChart 
+      [data]="chartData"
+      [options]="chartOptions"
+      chartType="bar">
+    </canvas>
+  </div>
+
+  <!-- No Data Message -->
+  <div *ngIf="selectedUser && chartData.labels?.length === 0" class="text-center text-gray-500 mt-4">
+    No workout data found for {{ selectedUser }}.
+  </div>
+</section>

@@ -1,0 +1,55 @@
+<nav
+  class="flex items-center justify-between bg-white shadow-md px-6 py-4 rounded-lg"
+>
+  <!-- Logo / Branding -->
+  <section>
+    <a
+      class="font-bold text-xl text-blue-600 hover:text-blue-800 transition"
+      routerLink="/"
+    >
+      Workout Health Tracker
+    </a>
+  </section>
+
+  <!-- Navigation Links -->
+  <section class="flex gap-5">
+    <!-- <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition"
+    >
+      Home
+    </a> -->
+    <a
+      routerLink="/"
+      routerLinkActive="bg-blue-100 text-blue-600"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-100 hover:text-blue-600"
+    >
+      Home
+    </a>
+
+    <a
+      routerLinkActive="bg-blue-100 text-blue-600"
+      class="px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-100 hover:text-blue-600"
+      routerLink="/addworkout"
+    >
+      Add Workout
+    </a>
+    <a
+      routerLinkActive="bg-blue-100 text-blue-600"
+      class="px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-100 hover:text-blue-600"
+      routerLink="/listworkout"
+    >
+      List Workout
+    </a>
+    <a
+      routerLinkActive="bg-blue-100 text-blue-600"
+      class="px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-100 hover:text-blue-600"
+      routerLink="/workoutgraph"
+    >
+      Workout Graph
+    </a>
+  </section>
+</nav>
